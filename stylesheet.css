@@ -1,0 +1,16 @@
+body {
+  height: 650px;
+}
+.topBar {
+  position: absolute;
+  top: 0px;
+  width: 50px;
+  background-color: black;
+}
+
+.bottomBar {
+  position: absolute;
+  bottom: 0px;
+  width: 50px;
+  background-color: black;
+}

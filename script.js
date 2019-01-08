@@ -1,5 +1,3 @@
-let position = 0;
-
 const flyCopter = function() {
   const copterStyle = document.getElementById("copter").style;
   if (event.key == "ArrowUp") {
@@ -8,8 +6,7 @@ const flyCopter = function() {
   }
 };
 
-const dragShuttle = function() {
-  const copterStyle = document.getElementById("copter").style;
+const dragCopter = function(copterStyle) {
   let copterTopLocation = +copterStyle.top.replace("px", "") + 0.3;
   copterStyle.top = copterTopLocation + "px";
   return copterTopLocation;
@@ -19,54 +16,66 @@ const moveBars = function(divId) {
   let leftPosition = +document
     .getElementById(divId)
     .style.left.replace("px", "");
-  return leftPosition - 10;
+  return leftPosition - 1;
 };
 
 const getBarHeight = function(divId) {
-  const barStyle = document.getElementById(divId).style;
+  let barHeight = 0;
   if (divId < 7) {
-    barStyle.height = Math.floor(Math.random() * (400 - 150) + 150);
+    barHeight = Math.floor(Math.random() * (400 - 150) + 150);
   }
   if (divId > 6) {
-    barStyle.height = Math.floor(Math.random() * (250 - 100) + 100);
+    barHeight = Math.floor(Math.random() * (250 - 100) + 100);
   }
-  return barStyle.height;
+  return barHeight;
 };
 
-const runGame = function() {
-  let barPosition = 0;
+const setBarHeight = function(divId, barHeight) {
+  const barStyle = document.getElementById(divId).style;
+  if (divId < 7) {
+    barStyle.height = barHeight + "px";
+  }
+  if (divId > 6) {
+    barStyle.height = barHeight + "px";
+  }
+};
+
+const startGame = function() {
+  const copterStyle = document.getElementById("copter").style;
   let barHeight = 0;
+  let barLeftPosition = 0;
   let logic = 0;
   let game = setInterval(function() {
-    shuttleLocation = dragShuttle();
+    copterLocation = dragCopter(copterStyle);
 
     for (let divId = 1; divId < 13; divId++) {
-      barPosition = moveBars(divId);
-      if (barPosition < 0) {
+      const divIdDoc = document.getElementById(divId);
+      barLeftPosition = moveBars(divId);
+
+      if (barLeftPosition < 0) {
         barHeight = getBarHeight(divId);
-        barHeight = +barHeight.replace("px", "");
-        barPosition = 1200;
+        setBarHeight(divId, barHeight);
+        barLeftPosition = 1200;
       }
-      document.getElementById(divId).style.left = barPosition + "px";
-      let className = document.getElementById(divId).className;
+      divIdDoc.style.left = barLeftPosition + "px";
+      let className = divIdDoc.className;
 
-      if (barPosition <= 65) {
-        logic = shuttleLocation + barHeight;
-
-        if (shuttleLocation <= barHeight && className == "topBar") {
+      if (barLeftPosition <= 65) {
+        if (copterLocation <= barHeight && className == "topBar") {
           clearInterval(game);
         }
 
+        logic = copterLocation + barHeight;
         if (className == "bottomBar" && logic >= 800) {
           clearInterval(game);
         }
       }
     }
-  }, 100);
+  }, 1);
 };
 
 const main = function() {
   if (event.key == " ") {
-    runGame();
+    startGame();
   }
 };
